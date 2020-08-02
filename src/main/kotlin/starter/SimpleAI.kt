@@ -1,21 +1,54 @@
 package starter
 
 
+import creep.fsm.FSM
+import creep.fsm.states.DelivedState
 import screeps.api.*
 import screeps.api.structures.StructureSpawn
 import screeps.utils.isEmpty
 import screeps.utils.unsafe.delete
 import screeps.utils.unsafe.jsObject
+import world.room.PopulationManager
+import world.room.RoomBuilder
+import world.room.RoomNeedsManager
 
 fun gameLoop() {
     val mainSpawn: StructureSpawn = Game.spawns.values.firstOrNull() ?: return
 
     //delete memories of creeps that have passed away
     houseKeeping(Game.creeps)
+    val creeps = mainSpawn.room.find(FIND_MY_CREEPS)
 
     // just an example of how to use room memory
-    mainSpawn.room.memory.numberOfCreeps = mainSpawn.room.find(FIND_CREEPS).count()
+    mainSpawn.room.memory.numberOfCreeps = creeps.count()
 
+    val roomNeedsManager = RoomNeedsManager(mainSpawn.room);
+    roomNeedsManager.UpdateNeeds();
+
+    val populationManager = PopulationManager(mainSpawn);
+    populationManager.Process(mainSpawn.room);
+
+    val roomBuilder = RoomBuilder()
+
+    roomBuilder.Operate(mainSpawn.room)
+
+    val fsm = FSM()
+
+    creeps.forEach { x ->
+        var personalNeed = roomNeedsManager.GetPersonalNeed(x) //personal needs always on top
+        var commonNeed = roomNeedsManager.PopTopNeed()
+
+        if (personalNeed != null && personalNeed.score >= commonNeed.score) {
+
+            fsm.Operate(x, personalNeed.getStateToSatisfy())
+        }
+        else {
+            fsm.Operate(x, commonNeed.getStateToSatisfy())
+        }
+
+
+    }
+/*
     //make sure we have at least some creeps
     spawnCreeps(Game.creeps.values, mainSpawn)
 
@@ -65,6 +98,7 @@ fun gameLoop() {
             else -> creep.pause()
         }
     }
+ */
 
 }
 
