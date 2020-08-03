@@ -4,19 +4,21 @@ import helper.MathHelper
 import screeps.api.*
 
 class RoomBuilder {
-    val ExtentionSpreadRadius = 0
+    val ExtentionSpreadRadius = 1
+    val RoadSpreadRadius = 0
     val TowerSpreadRadius = 4
     val MaxTrackRoads = 5;
     val ContainersPerControllerLevel = 0.25f;
 
     public fun Operate(room: Room) {
-        return
 
         BuildAtRadomPosGreed(room, STRUCTURE_EXTENSION, ExtentionSpreadRadius, 0)
-        BuildAtRadomPosGreed(room, STRUCTURE_ROAD, ExtentionSpreadRadius, 1)
+        BuildAtRadomPosGreed(room, STRUCTURE_ROAD, RoadSpreadRadius, 1)
         BuildAtRadomPosCicle(room, STRUCTURE_TOWER, TowerSpreadRadius)
-        BuildAtRadomPosCicle(room, STRUCTURE_CONTAINER, (ContainersPerControllerLevel * (room.controller?.level ?: 0)).toInt())
+        BuildAtRadomPosCicle(room, STRUCTURE_CONTAINER, (ContainersPerControllerLevel * (room.controller?.level
+                ?: 0)).toInt())
         BuildRoadsToSources(room)
+        BuildSourcesRoads(room)
     }
 
     private fun BuildSourcesRoads(room: Room) {
@@ -44,8 +46,19 @@ class RoomBuilder {
 
         for (i in -radiusUpdated..radiusUpdated step 2)
             for (j in -radiusUpdated..radiusUpdated step 2) {
-
                 var point = RoomPosition(spawn.pos.x + i + seed, spawn.pos.y + j + seed, room.name)
+                var occupied = false
+
+                point.look().forEach { x ->
+                    if (x.terrain?.value == "wall")
+                        occupied = true;
+                    if (x.structure != null)
+                        occupied = true
+                }
+
+                if (occupied)
+                    continue
+
                 room.createConstructionSite(point, structureConstant)
             }
     }

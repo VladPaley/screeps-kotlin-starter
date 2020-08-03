@@ -6,21 +6,16 @@ import starter.state
 
 class UpgradeControllerState : IState{
     override fun Execute(creep: Creep) : Boolean {
-        try {
-            if(creep.memory.state == "" && creep.store.getFreeCapacity().toFloat() / (creep.store.getCapacity() as Int).toFloat() < 0.5f) {
-                creep.memory.state = "MineState"
-                MineState().Enter(creep)
-            }
-            else if (creep.memory.state == ""){
-                creep.memory.state = "DeliverState"
-                creep.memory.selectedTarget = GetController(creep)
-            }
-        }
-        catch (exceprion : Exception) {
-            console.log("upgrade " + exceprion)
-        }
 
 
+        if(creep.memory.state == "" && creep.store.getFreeCapacity().toFloat() / (creep.store.getCapacity() as Int).toFloat() < 0.5f) {
+            creep.memory.state = "MineState"
+            MineState().Enter(creep)
+        }
+        else if (creep.memory.state == ""){
+            creep.memory.state = "DeliverState"
+            creep.memory.selectedTarget = GetController(creep)
+        }
 
         if(creep.memory.state == "MineState" && MineState().Execute(creep))
             return true;
@@ -47,11 +42,11 @@ class UpgradeControllerState : IState{
 
     }
     override fun Exit(creep: Creep) {
-        TODO("Not yet implemented")
+        creep.say("Ex UpgradeControllerState")
     }
 
     override fun Enter(creep: Creep) {
-        TODO("Not yet implemented")
+        creep.say("En UpgradeControllerState")
     }
 
     override fun toString(): String {

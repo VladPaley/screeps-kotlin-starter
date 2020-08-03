@@ -57,13 +57,13 @@ public class RoomNeedsManager(private val room: Room) {
     private fun UpdateCollectNeed() {
         var score = 0f;
 
-        score += room.energyCapacityAvailable - room.energyAvailable;
-        score /= 10f
+        score += room.energyCapacityAvailable / room.energyAvailable
+
 
         var owners = room.find(FIND_STRUCTURES).filter { x -> x.structureType == STRUCTURE_CONTAINER || x.structureType == STRUCTURE_TOWER } as List<StoreOwner>
 
         owners.forEach { x ->
-            score += x.store.getFreeCapacity() / 100f
+            score += x.store.getCapacity(RESOURCE_ENERGY)!! / x.store.getUsedCapacity(RESOURCE_ENERGY)!!
         }
 
         if (score > 0f) {
@@ -76,14 +76,16 @@ public class RoomNeedsManager(private val room: Room) {
     }
 
     private fun UpdateUpgradeNeed() {
-           needs.add(UpgradeControllerNeed(1f + MIN_CONTROLLER_LEVEL.toFloat() / room.controller?.level!!.toFloat()))
+           needs.add(UpgradeControllerNeed(3f))
     }
 
     private fun UpdateBuildNeed() {
 
-        val INCRECE_FOR_TOWER = 0.3f;
+        val INCRECE_FOR_TOWER = 0.5f;
+        val INCRECE_FOR_CONTAINER = 0.3f;
         val INCRECE_FOR_ROAD = 0.2f;
-        val INCRECE_FOR_EXTENTION = 0.4f;
+        val INCRECE_FOR_WALL = 0.2f;
+        val INCRECE_FOR_EXTENTION = 0.8f;
 
         var score = 0f;
 
@@ -94,6 +96,8 @@ public class RoomNeedsManager(private val room: Room) {
                 STRUCTURE_TOWER -> score += INCRECE_FOR_TOWER;
                 STRUCTURE_EXTENSION -> score += INCRECE_FOR_EXTENTION;
                 STRUCTURE_ROAD -> score += INCRECE_FOR_ROAD;
+                STRUCTURE_CONTAINER -> score += INCRECE_FOR_CONTAINER;
+                STRUCTURE_WALL -> score += INCRECE_FOR_WALL;
             }
         }
 
@@ -127,7 +131,7 @@ public class RoomNeedsManager(private val room: Room) {
                 ?: 100f)
 
         if (creep.ticksToLive < DESIRE_TICKS_TO_LIVE && creep.memory.state == "HealState") {
-            score *= 1000
+            score *= 100000
         }
 
         personalNeeds.add(HealNeed(score))

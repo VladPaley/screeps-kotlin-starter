@@ -12,23 +12,22 @@ open class CollectState : IState {
     override fun Execute(creep: Creep): Boolean {
 
         try {
-
+             creep.memory.state == "" && creep.store.getFreeCapacity().toFloat() / (creep.store.getCapacity()!!) < 0.5f
+        } catch (exceprion: Exception) {
+            console.log("collect " + exceprion + " "+ creep)
         }
-        catch (exceprion : Exception) {
-            console.log(exceprion)
-        }
 
 
-        if(creep.memory.state != "MineState" && creep.memory.state != "DeliverState")
+        if (creep.memory.state != "MineState" && creep.memory.state != "DeliverState")
             creep.memory.state = ""
 
-    if (creep.memory.state == "" && creep.store.getFreeCapacity().toFloat() / (creep.store.getCapacity() as Int).toFloat() < 0.5f) {
-        creep.memory.state = "MineState"
-        MineState().Enter(creep)
-    } else if (creep.memory.state == "") {
-        creep.memory.state = "DeliverState"
-        creep.memory.selectedTarget = GetStorage(creep)
-    }
+        if (creep.memory.state == "" && creep.store.getFreeCapacity().toFloat() / (creep.store.getCapacity()!!) < 0.5f) {
+            creep.memory.state = "MineState"
+            MineState().Enter(creep)
+        } else if (creep.memory.state == "") {
+            creep.memory.state = "DeliverState"
+            creep.memory.selectedTarget = GetStorage(creep)
+        }
 
         if (creep.memory.state == "MineState" && MineState().Execute(creep))
             return true;
@@ -51,28 +50,23 @@ open class CollectState : IState {
     }
 
     private fun GetStorage(creep: Creep): String {
-        try {
-            var spawns = creep.room.find(FIND_STRUCTURES).filter { x -> x.structureType == STRUCTURE_SPAWN }.toTypedArray() as Array<StoreOwner>
-            spawns = spawns.filter { x -> x.store.getFreeCapacity(RESOURCE_ENERGY) > 0 }.toTypedArray()
-            var extentions = creep.room.find(FIND_STRUCTURES).filter { x -> x.structureType == STRUCTURE_EXTENSION }.toTypedArray() as Array<StoreOwner>
-            extentions = extentions.filter { x -> x.store.getFreeCapacity(RESOURCE_ENERGY) > 0 }.toTypedArray()
-            var container = creep.room.find(FIND_STRUCTURES).filter { x -> x.structureType == STRUCTURE_CONTAINER }.toTypedArray() as Array<StoreOwner>
-            container = container.filter { x -> x.store.getFreeCapacity(RESOURCE_ENERGY) > 0 }.toTypedArray()
-            var towers = creep.room.find(FIND_STRUCTURES).filter { x -> x.structureType == STRUCTURE_TOWER }.toTypedArray() as Array<StoreOwner>
-            towers = towers.filter { x -> x.store.getFreeCapacity(RESOURCE_ENERGY) > 0 }.toTypedArray()
+        var spawns = creep.room.find(FIND_STRUCTURES).filter { x -> x.structureType == STRUCTURE_SPAWN }.toTypedArray() as Array<StoreOwner>
+        spawns = spawns.filter { x -> x.store.getFreeCapacity(RESOURCE_ENERGY) > 0 }.toTypedArray()
+        var extentions = creep.room.find(FIND_STRUCTURES).filter { x -> x.structureType == STRUCTURE_EXTENSION }.toTypedArray() as Array<StoreOwner>
+        extentions = extentions.filter { x -> x.store.getFreeCapacity(RESOURCE_ENERGY) > 0 }.toTypedArray()
+        var container = creep.room.find(FIND_STRUCTURES).filter { x -> x.structureType == STRUCTURE_CONTAINER }.toTypedArray() as Array<StoreOwner>
+        container = container.filter { x -> x.store.getFreeCapacity(RESOURCE_ENERGY) > 0 }.toTypedArray()
+        var towers = creep.room.find(FIND_STRUCTURES).filter { x -> x.structureType == STRUCTURE_TOWER }.toTypedArray() as Array<StoreOwner>
+        towers = towers.filter { x -> x.store.getFreeCapacity(RESOURCE_ENERGY) > 0 }.toTypedArray()
 
-            if (spawns.size > 0)
-                return GetClosestAwalibleStorate(spawns, creep);
-            if (extentions.size > 0)
-                return GetClosestAwalibleStorate(extentions, creep);
-            if (towers.size > 0)
-                return GetClosestAwalibleStorate(towers, creep);
-            if (container.size > 0)
-                return GetClosestAwalibleStorate(container, creep);
-        }
-        catch (exception : Exception) {
-            console.log(exception)
-        }
+        if (spawns.size > 0)
+            return GetClosestAwalibleStorate(spawns, creep);
+        if (extentions.size > 0)
+            return GetClosestAwalibleStorate(extentions, creep);
+        if (towers.size > 0)
+            return GetClosestAwalibleStorate(towers, creep);
+        if (container.size > 0)
+            return GetClosestAwalibleStorate(container, creep);
 
 
         return ""
@@ -95,7 +89,7 @@ open class CollectState : IState {
     }
 
     override fun Enter(creep: Creep) {
-        if(creep.memory.state != "MineState" && creep.memory.state != "DeliverState")
+        if (creep.memory.state != "MineState" && creep.memory.state != "DeliverState")
             creep.memory.state = ""
 
         creep.say("En CollectState")

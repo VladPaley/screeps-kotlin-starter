@@ -47,6 +47,11 @@ class BuildState : IState {
         if(target != null)
             return target.id;
 
+        target = GetClosestContructionSiteOfType(STRUCTURE_CONTAINER, creep);
+
+        if(target != null)
+            return target.id;
+
         target = GetClosestContructionSiteOfType(STRUCTURE_ROAD, creep);
 
         if(target != null)
@@ -62,7 +67,7 @@ class BuildState : IState {
 
         if(sites.any()) {
             contstructionStates.sort { a, b ->
-                b.pos.getRangeTo(creep.pos) - a.pos.getRangeTo(creep)
+                b.progress - a.progress
             }
             return sites[0]
         }

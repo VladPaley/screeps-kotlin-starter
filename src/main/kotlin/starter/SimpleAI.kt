@@ -33,19 +33,23 @@ fun gameLoop() {
     roomBuilder.Operate(mainSpawn.room)
 
     val fsm = FSM()
+    console.log("\n")
 
     creeps.forEach { x ->
-        var personalNeed = roomNeedsManager.GetPersonalNeed(x) //personal needs always on top
-        var commonNeed = roomNeedsManager.PopTopNeed()
 
-        if (personalNeed != null && personalNeed.score >= commonNeed.score) {
+        if(x.body.count { y -> y.type == CARRY } > 0) {
 
-            fsm.Operate(x, personalNeed.getStateToSatisfy())
+            var personalNeed = roomNeedsManager.GetPersonalNeed(x) //personal needs always on top
+            var commonNeed = roomNeedsManager.PopTopNeed()
+            console.log(" " + commonNeed.getStateToSatisfy()  + " " + commonNeed.score)
+
+            if (personalNeed != null && personalNeed.score >= commonNeed.score) {
+
+                fsm.Operate(x, personalNeed.getStateToSatisfy())
+            } else {
+                fsm.Operate(x, commonNeed.getStateToSatisfy())
+            }
         }
-        else {
-            fsm.Operate(x, commonNeed.getStateToSatisfy())
-        }
-
 
     }
 /*
