@@ -33,8 +33,7 @@ fun gameLoop() {
     roomBuilder.Operate(mainSpawn.room)
 
     val fsm = FSM()
-    console.log("\n")
-
+    console.log("***_-_***")
     creeps.forEach { x ->
 
         if(x.body.count { y -> y.type == CARRY } > 0) {

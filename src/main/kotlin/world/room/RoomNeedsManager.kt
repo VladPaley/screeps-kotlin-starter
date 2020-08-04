@@ -9,9 +9,10 @@ import world.room.needs.*
 public class RoomNeedsManager(private val room: Room) {
     val MIN_CONTROLLER_LEVEL = 2.2f;
     val PER_CREEP_DECREACE = 1
-    val PERCENT_TO_START_FIXING = 0.5f;
+    val PERCENT_TO_START_FIXING = 0.4f;
     val MIN_TICKS_TO_LIVE = 300
     val DESIRE_TICKS_TO_LIVE = 1000
+    val DESIRE_COUNT_OF_CREEPS = 6
 
 
     var needs: MutableList<INeed> = arrayListOf()
@@ -59,6 +60,7 @@ public class RoomNeedsManager(private val room: Room) {
 
         score += room.energyCapacityAvailable / room.energyAvailable
 
+        score += (DESIRE_COUNT_OF_CREEPS - room.find(FIND_MY_CREEPS).size)
 
         var owners = room.find(FIND_STRUCTURES).filter { x -> x.structureType == STRUCTURE_CONTAINER || x.structureType == STRUCTURE_TOWER } as List<StoreOwner>
 

@@ -22,8 +22,8 @@ class FSM {
         when (state) {
             "HealState" -> return HealState()
             //          "WithdrawEnergyState" -> return WithdrawEnergyState()
-            "BuildState" -> return BuildState()
-            "RepairSatate" -> return RepairSatate()
+           // "BuildState" -> return BuildState()
+           // "RepairSatate" -> return RepairSatate()
             //      "DelivedState" -> return DelivedState()
         }
 

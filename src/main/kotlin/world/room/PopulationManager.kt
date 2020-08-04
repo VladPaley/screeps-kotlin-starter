@@ -30,10 +30,12 @@ class PopulationManager(private val spawn: StructureSpawn) {
     }
 
     private fun GetBodyForWorker(): Array<BodyPartConstant> {
+
+
         var avaliblePoints = spawn.room.energyCapacityAvailable;
 
         if(spawn.room.find(FIND_MY_CREEPS).size == 0)
-            avaliblePoints = spawn.store.getUsedCapacity(RESOURCE_ENERGY)!!
+            avaliblePoints = spawn.room.energyAvailable
 
         val avalibleBaseBlocks: Int = avaliblePoints / 300
 
@@ -67,6 +69,7 @@ class PopulationManager(private val spawn: StructureSpawn) {
 
         if(avaliblePoints == 50)
             result.add(MOVE)
+
 
         return result.toTypedArray()
     }

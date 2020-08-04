@@ -23,7 +23,7 @@ class DelivedState : IState {
             }
 
             if(storeAtempt != ERR_INVALID_TARGET)
-                return storeAtempt === OK
+                return storeAtempt === OK || storeAtempt === ERR_FULL
         }
 
         var consructionSite = Game.getObjectById<ConstructionSite>(creep.memory.selectedTarget)
@@ -37,7 +37,7 @@ class DelivedState : IState {
             }
 
 
-            return storeAtempt === OK
+            return storeAtempt === OK || storeAtempt === ERR_FULL
         }
 
         var controller = Game.getObjectById<StructureController>(creep.memory.selectedTarget)

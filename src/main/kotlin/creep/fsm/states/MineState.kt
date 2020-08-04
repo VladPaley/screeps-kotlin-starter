@@ -15,7 +15,6 @@ class MineState : IState {
         val source = Game.getObjectById<Source>(creep.memory.selectedTarget)
 
         if (source == null) {
-            console.log(creep.memory.selectedTarget)
             return false
         }
 
@@ -45,17 +44,10 @@ class MineState : IState {
             var aEmptinessFactor = ((a.energyCapacity.toFloat() - a.energy.toFloat()) / ENERGY_LACK_FACTOR).toInt()
             var bEmptinessFactor = ((b.energyCapacity.toFloat() - b.energy.toFloat()) / ENERGY_LACK_FACTOR).toInt()
 
-            console.log( "  " + aEmptinessFactor + "  " + a.id)
-            console.log( "  " + bEmptinessFactor + "  " + b.id)
-            console.log( " a cost:  " + (PathFinder.search(a.pos, creep.pos).cost + creepsAFactor * CREEP_DISTANCE_FACTOR + aEmptinessFactor) + "  " + b.id)
-            console.log( "b const   " + ((PathFinder.search(b.pos, creep.pos).cost + creepsBFactor * CREEP_DISTANCE_FACTOR) + bEmptinessFactor) + "  " + b.id)
-
-
             (PathFinder.search(a.pos, creep.pos).cost + creepsAFactor * CREEP_DISTANCE_FACTOR + aEmptinessFactor) -
                     ((PathFinder.search(b.pos, creep.pos).cost + creepsBFactor * CREEP_DISTANCE_FACTOR) + bEmptinessFactor)
         }
 
-        console.log(sources[0].id)
         return sources[0].id
     }
 

@@ -10,14 +10,11 @@ import starter.state
 
 open class CollectState : IState {
     override fun Execute(creep: Creep): Boolean {
-
         try {
              creep.memory.state == "" && creep.store.getFreeCapacity().toFloat() / (creep.store.getCapacity()!!) < 0.5f
         } catch (exceprion: Exception) {
             console.log("collect " + exceprion + " "+ creep)
         }
-
-
         if (creep.memory.state != "MineState" && creep.memory.state != "DeliverState")
             creep.memory.state = ""
 
@@ -38,6 +35,9 @@ open class CollectState : IState {
             DelivedState().Enter(creep)
             creep.memory.state = "DeliverState"
         }
+
+        if(Game.getObjectById<StoreOwner>(creep.memory.selectedTarget)?.store?.getFreeCapacity(RESOURCE_ENERGY) == 0)
+            creep.memory.selectedTarget = GetStorage(creep)
 
         if (creep.memory.state == "DeliverState" && !DelivedState().Execute(creep)) {
             DelivedState().Exit(creep)

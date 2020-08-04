@@ -6,7 +6,7 @@ import starter.selectedTarget
 import starter.state
 
 class RepairSatate : IState {
-    val PERCENT_TO_START_FIXING = 0.5f;
+    val PERCENT_TO_START_FIXING = 0.4f;
 
     override fun Execute(creep: Creep): Boolean {
 
@@ -36,7 +36,6 @@ class RepairSatate : IState {
 
         if (creep.memory.state == "DeliverState") {
             if (creep.store.getUsedCapacity() == 0) {
-                console.log(creep.memory.state)
 
                 creep.memory.selectedTarget = ""
                 WithdrawEnergyState().Enter(creep)
