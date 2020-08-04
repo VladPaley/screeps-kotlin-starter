@@ -3,8 +3,10 @@ package starter
 
 import creep.fsm.FSM
 import creep.fsm.states.DelivedState
+import misc.TowerOperator
 import screeps.api.*
 import screeps.api.structures.StructureSpawn
+import screeps.api.structures.StructureTower
 import screeps.utils.isEmpty
 import screeps.utils.unsafe.delete
 import screeps.utils.unsafe.jsObject
@@ -51,6 +53,13 @@ fun gameLoop() {
         }
 
     }
+
+    val towers = mainSpawn.room.find(FIND_STRUCTURES).filter { x-> x.structureType == STRUCTURE_TOWER }.toTypedArray()
+
+    val tower = TowerOperator()
+
+    towers.forEach { x -> tower.Operate(x as StructureTower)}
+
 /*
     //make sure we have at least some creeps
     spawnCreeps(Game.creeps.values, mainSpawn)

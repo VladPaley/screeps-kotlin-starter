@@ -2,6 +2,7 @@ package misc
 
 import screeps.api.FIND_HOSTILE_CREEPS
 import screeps.api.FIND_MY_STRUCTURES
+import screeps.api.FIND_STRUCTURES
 import screeps.api.FilterOption
 import screeps.api.structures.StructureTower
 
@@ -15,8 +16,10 @@ class TowerOperator {
             return
         }
 
-        var closestDamagedStructure = tower.room.find(FIND_MY_STRUCTURES).filter { x -> x.hits < x.hitsMax }.sortedBy { a -> tower.pos.getRangeTo(a.pos) }[0]
-        tower.repair(closestDamagedStructure)
+        var closestDamagedStructure = tower.room.find(FIND_STRUCTURES).filter { x -> x.hits.toFloat() / x.hitsMax.toFloat() < 0.5f }.sortedBy { a -> tower.pos.getRangeTo(a.pos) }
+
+        if(closestDamagedStructure.size > 0)
+            tower.repair(closestDamagedStructure[0])
 
     }
 }
