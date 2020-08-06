@@ -81,6 +81,10 @@ public class RoomNeedsManager(private val room: Room) {
     }
 
     private fun UpdateUpgradeNeed() {
+        var score = 3f;
+        if(room.controller?.ticksToDowngrade ?: 0 < 3500)
+            score += 1000000f;
+
            needs.add(UpgradeControllerNeed(3f))
     }
 
