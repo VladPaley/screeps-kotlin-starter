@@ -4,15 +4,15 @@ import helper.MathHelper
 import screeps.api.*
 
 class RoomBuilder {
-    val ExtentionSpreadRadius = 1
+    val ExtentionSpreadRadius = -1
     val RoadSpreadRadius = 0
-    val TowerSpreadRadius = 4
+    val TowerSpreadRadius = 3
     val MaxTrackRoads = 5;
     val ContainersPerControllerLevel = 0.25f;
 
     public fun Operate(room: Room) {
 
-        BuildAtRadomPosGreed(room, STRUCTURE_EXTENSION, ExtentionSpreadRadius + (room.controller?.level ?: 0), 0)
+        BuildAtRadomPosGreed(room, STRUCTURE_EXTENSION, ExtentionSpreadRadius + (room.controller?.level ?: 0)/2, 0)
         BuildAtRadomPosGreed(room, STRUCTURE_ROAD, RoadSpreadRadius, 1)
         BuildAtRadomPosCicle(room, STRUCTURE_TOWER, TowerSpreadRadius)
         BuildAtRadomPosCicle(room, STRUCTURE_CONTAINER, (ContainersPerControllerLevel * (room.controller?.level

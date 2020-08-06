@@ -62,6 +62,9 @@ public class RoomNeedsManager(private val room: Room) {
 
         score += (DESIRE_COUNT_OF_CREEPS - room.find(FIND_MY_CREEPS).size)
 
+        if(room.find(FIND_MY_CREEPS).size == 1)
+            score += 650f;
+
         var owners = room.find(FIND_STRUCTURES).filter { x -> x.structureType == STRUCTURE_CONTAINER || x.structureType == STRUCTURE_TOWER } as List<StoreOwner>
 
         owners.forEach { x ->
