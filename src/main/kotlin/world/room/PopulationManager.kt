@@ -37,6 +37,9 @@ class PopulationManager(private val spawn: StructureSpawn) {
         if(spawn.room.find(FIND_MY_CREEPS).size == 0)
             avaliblePoints = spawn.room.energyAvailable
 
+        if(spawn.room.find(FIND_MY_CREEPS).size == 1)
+            avaliblePoints /= 2
+
         val avalibleBaseBlocks: Int = avaliblePoints / 300
 
         var result: MutableList<BodyPartConstant> = mutableListOf();

@@ -63,7 +63,7 @@ public class RoomNeedsManager(private val room: Room) {
         score += (DESIRE_COUNT_OF_CREEPS - room.find(FIND_MY_CREEPS).size)
 
         if(room.find(FIND_MY_CREEPS).size == 1)
-            score += 650f;
+            score += 10;
 
         var owners = room.find(FIND_STRUCTURES).filter { x -> x.structureType == STRUCTURE_CONTAINER || x.structureType == STRUCTURE_TOWER } as List<StoreOwner>
 
@@ -82,10 +82,11 @@ public class RoomNeedsManager(private val room: Room) {
 
     private fun UpdateUpgradeNeed() {
         var score = 3f;
-        if(room.controller?.ticksToDowngrade ?: 0 < 3500)
+
+        if(room.controller?.ticksToDowngrade < 3500)
             score += 1000000f;
 
-           needs.add(UpgradeControllerNeed(3f))
+           needs.add(UpgradeControllerNeed(score))
     }
 
     private fun UpdateBuildNeed() {
@@ -115,6 +116,9 @@ public class RoomNeedsManager(private val room: Room) {
     }
 
     private fun UpdateRepairNeed() {
+        if(room.find(FIND_MY_CREEPS).size < 2)
+            return
+
         val targets = room.find(FIND_STRUCTURES).filter { x -> x.structureType != STRUCTURE_CONTROLLER && x.hits.toFloat() / x.hitsMax.toFloat() < PERCENT_TO_START_FIXING }.toTypedArray()
 
         if (!targets.any())
