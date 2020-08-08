@@ -7,7 +7,7 @@ import starter.Role
 import starter.role
 
 class PopulationManager(private val spawn: StructureSpawn) {
-    val DESIRE_WORKERS_COUNT = 4;
+    val DESIRE_WORKERS_COUNT = 3
     val DESIRE_WARRIORS_COUNT = 0;
 
     public fun Process(room: Room) {

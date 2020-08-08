@@ -1,10 +1,10 @@
 package world.room
 
-import creep.fsm.states.RepairSatate
 import screeps.api.*
-import screeps.api.structures.Structure
 import starter.state
 import world.room.needs.*
+import world.room.needs.personalNeeds.HealNeed
+import world.room.needs.personalNeeds.RecycleNeed
 
 public class RoomNeedsManager(private val room: Room) {
     val MIN_CONTROLLER_LEVEL = 2.2f;
@@ -29,6 +29,7 @@ public class RoomNeedsManager(private val room: Room) {
     public fun GetPersonalNeed(creep: Creep): INeed? {
         var personalNeeds: MutableList<INeed> = arrayListOf()
         UpdateHealNeed(creep, personalNeeds);
+        UpdateRecycleNeed(creep, personalNeeds)
         personalNeeds = personalNeeds.sortedByDescending { it.score }.toMutableList()
 
         return if (personalNeeds.size > 0)
@@ -99,8 +100,15 @@ public class RoomNeedsManager(private val room: Room) {
 
         var score = 0f;
 
-        val storages = room.find(FIND_CONSTRUCTION_SITES);
+        score += INCRECE_FOR_TOWER
+        score += INCRECE_FOR_CONTAINER
+        score += INCRECE_FOR_ROAD
+        score += INCRECE_FOR_WALL
+        score += INCRECE_FOR_EXTENTION
 
+        if(room.find(FIND_CONSTRUCTION_SITES).size == 0)
+            return
+/*
         storages.forEach { x ->
             when (x.structureType) {
                 STRUCTURE_TOWER -> score += INCRECE_FOR_TOWER;
@@ -110,13 +118,13 @@ public class RoomNeedsManager(private val room: Room) {
                 STRUCTURE_WALL -> score += INCRECE_FOR_WALL;
             }
         }
-
+*/
         if (score > 0f)
             needs.add(BuildNeed(score))
     }
 
     private fun UpdateRepairNeed() {
-        if(room.find(FIND_MY_CREEPS).size < 2)
+        if(room.find(FIND_MY_CREEPS).size < DESIRE_COUNT_OF_CREEPS)
             return
 
         val targets = room.find(FIND_STRUCTURES).filter { x -> x.structureType != STRUCTURE_CONTROLLER && x.hits.toFloat() / x.hitsMax.toFloat() < PERCENT_TO_START_FIXING }.toTypedArray()
@@ -139,15 +147,26 @@ public class RoomNeedsManager(private val room: Room) {
         if (creep.ticksToLive > DESIRE_TICKS_TO_LIVE || (creep.ticksToLive > MIN_TICKS_TO_LIVE && creep.memory.state != "HealState"))
             return
 
-        var spawn = creep.room.find(FIND_MY_SPAWNS)[0]
-        var score: Float = MIN_TICKS_TO_LIVE.toFloat() * 4 / (creep.ticksToLive.toFloat()) - (spawn.store.getCapacity(RESOURCE_ENERGY)?.toFloat()?.div((spawn.store.getUsedCapacity(RESOURCE_ENERGY)!!.toFloat().plus(0.1f)))
-                ?: 100f)
+        if(creep.room.energyAvailable < 300)
+            return
+
+        var score: Float = MIN_TICKS_TO_LIVE.toFloat() * 4 / (creep.ticksToLive.toFloat())
 
         if (creep.ticksToLive < DESIRE_TICKS_TO_LIVE && creep.memory.state == "HealState") {
             score *= 100000
         }
 
+        console.log("Heal: $score")
+
         personalNeeds.add(HealNeed(score))
+    }
+
+    private fun UpdateRecycleNeed(creep: Creep, personalNeeds: MutableList<INeed>) {
+        if (GetCreepCost(creep) > creep.room.energyCapacityAvailable || creep.room.find(FIND_MY_CREEPS).isEmpty())
+            return
+
+        if(GetCreepCost(creep) < creep.room.energyAvailable / 3)
+            personalNeeds.add(RecycleNeed(999f))
     }
 
     private fun GetCreepCost(creep: Creep): Int {

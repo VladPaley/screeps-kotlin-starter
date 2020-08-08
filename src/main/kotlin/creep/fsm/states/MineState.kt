@@ -12,6 +12,9 @@ class MineState : IState {
         if (creep.memory.selectedTarget == "")
             creep.memory.selectedTarget = GetSource(creep);
 
+        if(PickupEnergyState().Execute(creep))
+            return true
+
         val source = Game.getObjectById<Source>(creep.memory.selectedTarget)
 
         if (source == null) {

@@ -13,7 +13,7 @@ class RoomBuilder {
     public fun Operate(room: Room) {
 
         BuildAtRadomPosGreed(room, STRUCTURE_EXTENSION, ExtentionSpreadRadius + (room.controller?.level ?: 0)/2, 0)
-        BuildAtRadomPosGreed(room, STRUCTURE_ROAD, RoadSpreadRadius, 1)
+       // BuildAtRadomPosGreed(room, STRUCTURE_ROAD, RoadSpreadRadius, 1)
         BuildAtRadomPosCicle(room, STRUCTURE_TOWER, TowerSpreadRadius)
         BuildAtRadomPosCicle(room, STRUCTURE_CONTAINER, (ContainersPerControllerLevel * (room.controller?.level
                 ?: 0)).toInt())

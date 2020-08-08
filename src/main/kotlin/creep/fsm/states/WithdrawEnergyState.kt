@@ -10,19 +10,8 @@ class WithdrawEnergyState : IState {
         if(creep.store.getUsedCapacity() == creep.store.getCapacity())
             return false
 
-        var target = GetFreeEnergy(creep)
-
-        if (target != null) {
-            if (creep.pickup(target) == ERR_NOT_IN_RANGE)
-                creep.moveTo(target)
-
-            if(creep.memory.state == MineState().toString()) {
-                MineState().Exit(creep)
-                creep.memory.state = toString()
-            }
-
+        if(PickupEnergyState().Execute(creep))
             return true
-        }
 
         var storage = GetEnergyContainer(creep)
 
@@ -43,17 +32,7 @@ class WithdrawEnergyState : IState {
         return MineState().Execute(creep)
     }
 
-    private fun GetFreeEnergy(creep: Creep): Resource? {
-        var energies = creep.room.find(FIND_DROPPED_RESOURCES).filter { x -> x.resourceType == RESOURCE_ENERGY }
 
-        if (energies.size == 0)
-            return null
-
-        energies.sortedBy { a -> PathFinder.search(a.pos, creep.pos).cost }
-
-        return energies[0]
-
-    }
 
     private fun GetEnergyContainer(creep: Creep): StoreOwner? {
         var sources = creep.room.find(FIND_STRUCTURES).filter { x -> x.structureType == STRUCTURE_CONTAINER } as List<StoreOwner>
